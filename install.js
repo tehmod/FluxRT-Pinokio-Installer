@@ -32,6 +32,10 @@ module.exports = {
       method: "shell.run",
       params: {
         bluefairy: "off",
+        conda: {
+          path: "env",
+          python: "3.12"
+        },
         path: "app",
         message: "python ../pinokio_tasks.py models",
         on: [{

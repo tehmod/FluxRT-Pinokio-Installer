@@ -141,15 +141,15 @@ def repo_id_from_url(url):
 
 
 def sync_hf_repo(name, url, ready_file, allow_patterns=None):
-    ensure_huggingface_hub()
-    from huggingface_hub import snapshot_download
-
     repo = APP / name
     ready = APP / ready_file
     if is_real_file(ready):
         print(f"{name} is already downloaded.", flush=True)
         remove_git_metadata(repo)
         return
+    ensure_huggingface_hub()
+    from huggingface_hub import snapshot_download
+
     repo.mkdir(parents=True, exist_ok=True)
     print(f"Downloading {name} from Hugging Face...", flush=True)
     kwargs = {
