@@ -9,6 +9,8 @@ module.exports = {
           "set -euo pipefail",
           "command -v git-lfs >/dev/null 2>&1 || conda install -y -c conda-forge git-lfs",
           "if [ -d app/.git ]; then git -C app fetch --all --prune && git -C app reset --hard origin/main; elif [ -d app ]; then echo 'ERROR: Existing app directory is not a git repo. Remove it and retry.' && exit 1; else git clone https://github.com/tensorforger/FluxRT app; fi",
+          "for name in RIFE-safetensors FLUX.2-klein-4B FLUX.2-klein-4B-int8 LivePortrait LivePortrait-code loras; do if [ -e \"app/app/$name\" ]; then if [ ! -e \"app/$name\" ]; then echo \"Moving nested app/app/$name to app/$name\" && mv \"app/app/$name\" \"app/$name\"; else echo \"WARNING: app/app/$name also exists; keeping both so no user data is removed.\"; fi; fi; done",
+          "if [ -d app/app ] && [ -z \"$(find app/app -mindepth 1 -maxdepth 1 -print -quit)\" ]; then rmdir app/app; fi",
           "cd app && git-lfs install && git-lfs pull && cd .."
         ]
       }
@@ -37,8 +39,8 @@ module.exports = {
         message: [
           "set -euo pipefail",
           "command -v git-lfs >/dev/null 2>&1 || conda install -y -c conda-forge git-lfs",
-          "if [ -f RIFE-safetensors/flownet.safetensors ]; then echo 'RIFE-safetensors is already downloaded.'; elif [ -d RIFE-safetensors/.git ]; then cd RIFE-safetensors && git pull --ff-only && git-lfs pull && cd ..; elif [ -d RIFE-safetensors ]; then echo 'ERROR: RIFE-safetensors exists but is incomplete. Remove it and retry.' && exit 1; else GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/TensorForger/RIFE-safetensors RIFE-safetensors && cd RIFE-safetensors && git-lfs pull && cd ..; fi",
-          "if [ -f FLUX.2-klein-4B/transformer/diffusion_pytorch_model.safetensors ]; then echo 'FLUX.2-klein-4B is already downloaded.'; elif [ -d FLUX.2-klein-4B/.git ]; then cd FLUX.2-klein-4B && git pull --ff-only && git-lfs pull && cd ..; elif [ -d FLUX.2-klein-4B ]; then echo 'ERROR: FLUX.2-klein-4B exists but is incomplete. Remove it and retry.' && exit 1; else GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/black-forest-labs/FLUX.2-klein-4B FLUX.2-klein-4B && cd FLUX.2-klein-4B && git-lfs pull && cd ..; fi",
+          "if [ -f RIFE-safetensors/flownet.safetensors ] && ! grep -q 'git-lfs.github.com/spec' RIFE-safetensors/flownet.safetensors; then echo 'RIFE-safetensors is already downloaded.'; elif [ -d RIFE-safetensors/.git ]; then cd RIFE-safetensors && git pull --ff-only && git-lfs pull && cd ..; elif [ -d RIFE-safetensors ]; then echo 'ERROR: RIFE-safetensors exists but is incomplete. Remove it and retry.' && exit 1; else GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/TensorForger/RIFE-safetensors RIFE-safetensors && cd RIFE-safetensors && git-lfs pull && cd ..; fi",
+          "if [ -f FLUX.2-klein-4B/transformer/diffusion_pytorch_model.safetensors ] && ! grep -q 'git-lfs.github.com/spec' FLUX.2-klein-4B/transformer/diffusion_pytorch_model.safetensors; then echo 'FLUX.2-klein-4B is already downloaded.'; elif [ -d FLUX.2-klein-4B/.git ]; then cd FLUX.2-klein-4B && git pull --ff-only && git-lfs pull && cd ..; elif [ -d FLUX.2-klein-4B ]; then echo 'ERROR: FLUX.2-klein-4B exists but is incomplete. Remove it and retry.' && exit 1; else GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/black-forest-labs/FLUX.2-klein-4B FLUX.2-klein-4B && cd FLUX.2-klein-4B && git-lfs pull && cd ..; fi",
           "mkdir -p loras",
           "git-lfs install",
           "git-lfs pull"

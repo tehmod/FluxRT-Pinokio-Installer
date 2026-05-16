@@ -40,6 +40,8 @@ The Pinokio Gradio wrapper exposes:
 
 The int8 model, model compilation, resolution, and interpolation factor are startup-time choices because FluxRT allocates models and shared tensors when the processor starts. Use `Start int8` for quantized inference. LoRAs can be loaded while the app is running from files saved under `app/loras`.
 
+The launcher keeps all downloaded model folders directly under `app/`, matching FluxRT's runtime working directory. If an older broken install left model folders under `app/app/`, `Install`, `Update`, and `Start` will move known model folders back to `app/` instead of downloading a second copy.
+
 ## Resolution benchmarking
 
 Use `Benchmark resolutions` from the Pinokio menu while the web UI is stopped. The runner writes:
