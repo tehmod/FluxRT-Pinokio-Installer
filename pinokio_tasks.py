@@ -57,6 +57,12 @@ def ensure_git_lfs():
     add_managed_bin_to_path()
 
 
+def ensure_huggingface_hub():
+    if has_module("huggingface_hub"):
+        return
+    run([sys.executable, "-m", "pip", "install", "huggingface_hub"])
+
+
 def is_real_file(path):
     path = Path(path)
     if not path.is_file():
@@ -65,6 +71,13 @@ def is_real_file(path):
         return b"git-lfs.github.com/spec" not in path.read_bytes()[:512]
     except OSError:
         return False
+
+
+def remove_git_metadata(repo):
+    git_dir = Path(repo) / ".git"
+    if git_dir.exists():
+        print(f"Removing local Git/LFS cache from {Path(repo).relative_to(APP)}", flush=True)
+        shutil.rmtree(git_dir)
 
 
 def migrate_nested_app():
@@ -123,24 +136,33 @@ def install_python_deps(full_install):
         run([sys.executable, "-m", "pip", "install", "-e", "."], cwd=APP)
 
 
-def sync_hf_repo(name, url, ready_file, lfs_args=None):
-    ensure_git_lfs()
+def repo_id_from_url(url):
+    return url.removeprefix("https://huggingface.co/").strip("/")
+
+
+def sync_hf_repo(name, url, ready_file, allow_patterns=None):
+    ensure_huggingface_hub()
+    from huggingface_hub import snapshot_download
+
     repo = APP / name
     ready = APP / ready_file
     if is_real_file(ready):
         print(f"{name} is already downloaded.", flush=True)
+        remove_git_metadata(repo)
         return
-    if (repo / ".git").is_dir():
-        run(["git", "pull", "--ff-only"], cwd=repo)
-    elif repo.exists():
-        raise SystemExit(f"ERROR: {name} exists but is incomplete. Remove it and retry.")
-    else:
-        env = os.environ.copy()
-        env["GIT_LFS_SKIP_SMUDGE"] = "1"
-        run(["git", "clone", url, name], cwd=APP, env=env)
-    run(["git-lfs", "pull", *(lfs_args or [])], cwd=repo)
+    repo.mkdir(parents=True, exist_ok=True)
+    print(f"Downloading {name} from Hugging Face...", flush=True)
+    kwargs = {
+        "repo_id": repo_id_from_url(url),
+        "local_dir": str(repo),
+        "resume_download": True,
+    }
+    if allow_patterns:
+        kwargs["allow_patterns"] = allow_patterns
+    snapshot_download(**kwargs)
     if not is_real_file(ready):
         raise SystemExit(f"ERROR: {ready_file} is missing or still a Git LFS pointer.")
+    remove_git_metadata(repo)
 
 
 def install_models():
@@ -155,8 +177,6 @@ def install_models():
         "FLUX.2-klein-4B/transformer/diffusion_pytorch_model.safetensors",
     )
     (APP / "loras").mkdir(exist_ok=True)
-    run(["git-lfs", "install"], cwd=APP)
-    run(["git-lfs", "pull"], cwd=APP)
 
 
 def install_int8():
@@ -182,7 +202,7 @@ def install_liveportrait():
         "LivePortrait",
         "https://huggingface.co/KwaiVGI/LivePortrait",
         "LivePortrait/liveportrait/landmark.onnx",
-        ["--include=liveportrait/**,insightface/**"],
+        ["liveportrait/**", "insightface/**"],
     )
 
 
