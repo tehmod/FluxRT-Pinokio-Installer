@@ -1,6 +1,6 @@
 # FluxRT Pinokio Installer
 
-This Pinokio package installs and runs FluxRT from the official GitHub repository.
+Unofficial Pinokio launcher for [FluxRT](https://github.com/tensorforger/FluxRT) by TensorForger. FluxRT itself is created and maintained by TensorForger; this repository only packages installation and startup scripts for Pinokio.
 
 > Status: this launcher has only been tested on Linux with an NVIDIA GPU. Windows and macOS are not currently validated.
 
@@ -51,6 +51,13 @@ FluxRT's upstream README says its GUI virtual-camera output uses `pyvirtualcam` 
 - If FluxRT starts but virtual camera output is unavailable, check the [pyvirtualcam installation notes](https://pypi.org/project/pyvirtualcam/) and the upstream [FluxRT README](https://github.com/tensorforger/FluxRT).
 
 The Gradio browser UI can still launch without these pieces; they matter for sending FluxRT output into apps as a virtual webcam.
+
+## Attribution
+
+- FluxRT: [https://github.com/tensorforger/FluxRT](https://github.com/tensorforger/FluxRT)
+- FluxRT author/organization: TensorForger
+- FluxRT license: [Unlicense](https://github.com/tensorforger/FluxRT/blob/main/LICENSE)
+- Model files are downloaded from their respective Hugging Face repositories during installation and are not included in this repository.
 
 ## Resolution benchmarking
 
