@@ -17,8 +17,13 @@ module.exports = {
           "git-lfs install",
           "if [ -f LivePortrait/liveportrait/landmark.onnx ] && ! grep -q 'git-lfs.github.com/spec' LivePortrait/liveportrait/landmark.onnx; then echo 'LivePortrait models are already downloaded.'; elif [ -d LivePortrait/.git ]; then cd LivePortrait && git pull --ff-only && git-lfs pull --include='liveportrait/**,insightface/**' && cd ..; elif [ -d LivePortrait ]; then echo 'ERROR: LivePortrait exists but is incomplete. Remove it and retry.' && exit 1; else GIT_LFS_SKIP_SMUDGE=1 git clone https://huggingface.co/KwaiVGI/LivePortrait && cd LivePortrait && git-lfs pull --include='liveportrait/**,insightface/**' && cd ..; fi",
           "test -f LivePortrait/liveportrait/landmark.onnx",
-          "! grep -q 'git-lfs.github.com/spec' LivePortrait/liveportrait/landmark.onnx"
-        ]
+          "! grep -q 'git-lfs.github.com/spec' LivePortrait/liveportrait/landmark.onnx",
+          "echo PINOKIO_FLUXRT_LIVEPORTRAIT_READY"
+        ],
+        on: [{
+          event: "/PINOKIO_FLUXRT_LIVEPORTRAIT_READY/",
+          kill: true
+        }]
       }
     }
   ]
