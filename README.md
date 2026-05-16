@@ -16,6 +16,7 @@ This Pinokio package installs and runs FluxRT from the official GitHub repositor
 ## Launcher commands
 
 - `Install` — clones the repository, installs dependencies, and downloads required standard model weights
+- `Resume Install` — appears if an earlier install stopped after only part of the setup completed
 - `Start` — launches the Gradio UI with the standard model
 - `Start int8` — launches the Gradio UI with `--int8` after the int8 model has been downloaded
 - `Download int8 model` — downloads or resumes `FLUX.2-klein-4B-int8`

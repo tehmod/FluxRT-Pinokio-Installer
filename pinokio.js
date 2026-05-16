@@ -4,7 +4,11 @@ module.exports = {
   description: "Linux-tested Pinokio launcher for FluxRT with automatic model downloads.",
   icon: "icon.svg",
   menu: async (kernel, info) => {
-    let installed = await info.exists("app/.git")
+    let sourceInstalled = await info.exists("app/.git")
+    let envInstalled = await info.exists("app/env")
+    let requiredModelsInstalled = await info.exists("app/RIFE-safetensors/flownet.safetensors")
+      && await info.exists("app/FLUX.2-klein-4B/transformer/diffusion_pytorch_model.safetensors")
+    let installed = sourceInstalled && envInstalled && requiredModelsInstalled
     let running = {
       install: info.running("install.js"),
       start: info.running("start.js"),
@@ -25,6 +29,19 @@ module.exports = {
         icon: "fa-solid fa-plug",
         text: "Installing",
         href: "install.js",
+      }]
+    }
+
+    if (sourceInstalled && !installed) {
+      return [{
+        icon: "fa-solid fa-plug",
+        text: "Resume Install",
+        href: "install.js",
+      }, {
+        icon: "fa-regular fa-circle-xmark",
+        text: "Reset",
+        href: "reset.js",
+        confirm: "Are you sure you wish to reset the installation?"
       }]
     }
 
