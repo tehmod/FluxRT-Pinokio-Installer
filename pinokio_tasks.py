@@ -9,6 +9,30 @@ ROOT = Path(__file__).resolve().parent
 APP = ROOT / "app"
 
 
+def pinokio_home():
+    configured = os.environ.get("PINOKIO_HOME")
+    if configured:
+        return Path(configured).expanduser()
+    for parent in ROOT.parents:
+        if parent.name == "pinokio":
+            return parent
+    return None
+
+
+def add_managed_bin_to_path():
+    home = pinokio_home()
+    if not home:
+        return
+    bins = [
+        home / "bin" / "miniconda" / "bin",
+        home / "bin" / "git" / "bin",
+        home / "bin" / "npm" / "bin",
+    ]
+    existing = os.environ.get("PATH", "")
+    prefix = [str(path) for path in bins if path.exists()]
+    os.environ["PATH"] = os.pathsep.join(prefix + [existing])
+
+
 def run(cmd, cwd=None, env=None):
     print("+", " ".join(cmd), flush=True)
     subprocess.run(cmd, cwd=cwd, env=env, check=True)
@@ -23,9 +47,14 @@ def has_module(name):
 
 
 def ensure_git_lfs():
+    add_managed_bin_to_path()
     if shutil.which("git-lfs"):
         return
-    run(["conda", "install", "-y", "-c", "conda-forge", "git-lfs"])
+    conda = shutil.which("conda")
+    if not conda:
+        raise SystemExit("ERROR: Could not find git-lfs or conda in Pinokio's managed PATH.")
+    run([conda, "install", "-y", "-c", "conda-forge", "git-lfs"])
+    add_managed_bin_to_path()
 
 
 def is_real_file(path):
