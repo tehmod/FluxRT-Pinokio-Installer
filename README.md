@@ -42,6 +42,16 @@ The int8 model, model compilation, resolution, and interpolation factor are star
 
 The launcher keeps all downloaded model folders directly under `app/`, matching FluxRT's runtime working directory. If an older broken install left model folders under `app/app/`, `Install`, `Update`, and `Start` will move known model folders back to `app/` instead of downloading a second copy.
 
+## Virtual camera output dependencies
+
+FluxRT's upstream README says its GUI virtual-camera output uses `pyvirtualcam` and may require extra system-level virtual camera support. This Pinokio launcher has not independently validated those pieces on every platform and does not install kernel modules or desktop apps for you.
+
+- Linux: upstream says `v4l2loopback` must be installed and loaded for GUI virtual webcam access.
+- Windows: upstream says [OBS](https://obsproject.com/download) is required for GUI virtual webcam access.
+- If FluxRT starts but virtual camera output is unavailable, check the [pyvirtualcam installation notes](https://pypi.org/project/pyvirtualcam/) and the upstream [FluxRT README](https://github.com/tensorforger/FluxRT).
+
+The Gradio browser UI can still launch without these pieces; they matter for sending FluxRT output into apps as a virtual webcam.
+
 ## Resolution benchmarking
 
 Use `Benchmark resolutions` from the Pinokio menu while the web UI is stopped. The runner writes:
