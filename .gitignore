@@ -1,0 +1,9 @@
+app/
+logs/
+env/
+__pycache__/
+*.pyc
+.DS_Store
+node_modules/
+benchmark_resolutions*.md
+benchmark_resolutions*.json
