@@ -50,6 +50,10 @@ def run(cmd, cwd=None, env=None):
     subprocess.run(cmd, cwd=cwd, env=env, check=True)
 
 
+def uv_pip_install(args, cwd=None):
+    run(["uv", "pip", "install", *args], cwd=cwd)
+
+
 def has_module(name):
     return subprocess.run(
         [sys.executable, "-c", f"import {name}"],
@@ -72,7 +76,7 @@ def ensure_git_lfs():
 def ensure_huggingface_hub():
     if has_module("huggingface_hub"):
         return
-    run([sys.executable, "-m", "pip", "install", "huggingface_hub"])
+    uv_pip_install(["huggingface_hub"])
 
 
 def is_real_file(path):
@@ -136,9 +140,9 @@ def install_python_deps(full_install):
             "ERROR: torch is not installed. Run the Pinokio Install step (it invokes torch.js) before continuing."
         )
     if not has_module("cv2"):
-        run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], cwd=APP)
+        uv_pip_install(["-r", "requirements.txt"], cwd=APP)
     if not has_module("fluxrt"):
-        run([sys.executable, "-m", "pip", "install", "-e", "."], cwd=APP)
+        uv_pip_install(["-e", "."], cwd=APP)
 
 
 def ensure_runtime_ready():
@@ -200,7 +204,7 @@ def install_int8():
 def install_liveportrait():
     ensure_git_lfs()
     if not has_module("liveportrait"):
-        run([sys.executable, "-m", "pip", "install", "-r", "requirements_lipsync.txt"], cwd=APP)
+        uv_pip_install(["-r", "requirements_lipsync.txt"], cwd=APP)
     code = APP / "LivePortrait-code"
     if (code / ".git").is_dir():
         run(["git", "pull", "--ff-only"], cwd=code)

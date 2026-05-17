@@ -3,5 +3,6 @@
   "title": "FluxRT Pinokio Installer",
   "description": "Pinokio launcher for FluxRT with automatic model downloads.",
   "icon": "icon.svg",
-  "platform": ["linux", "win32"]
+  "platform": ["linux", "win32"],
+  "gpu": ["nvidia"]
 }

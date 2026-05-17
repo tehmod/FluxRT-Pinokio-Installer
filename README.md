@@ -8,7 +8,7 @@ Unofficial Pinokio launcher for [FluxRT](https://github.com/tensorforger/FluxRT)
 
 - clones `https://github.com/tensorforger/FluxRT` into `app`
 - creates a local Conda environment at `app/env`
-- installs PyTorch through the cross-platform `torch.js` helper (NVIDIA cu128 on Windows/Linux, ROCm on AMD Linux, DirectML on AMD Windows, MPS on Apple Silicon, CPU fallback)
+- installs PyTorch through the `torch.js` helper (NVIDIA cu128 on Windows/Linux)
 - installs project dependencies and the editable `fluxrt` package
 - downloads required models: `RIFE-safetensors` and `FLUX.2-klein-4B`
 - can optionally download `FLUX.2-klein-4B-int8`
