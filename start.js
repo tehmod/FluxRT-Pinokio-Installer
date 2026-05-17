@@ -32,20 +32,30 @@ module.exports = {
     {
       method: "shell.run",
       params: {
+        bluefairy: "off",
         conda: {
           path: "env",
           python: "3.12"
         },
         path: "app",
-        message: [
-          "python -c \"import torch\" >/dev/null 2>&1 || pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128",
-          "python -c \"import cv2\" >/dev/null 2>&1 || pip install -r requirements.txt",
-          "python -c \"import fluxrt\" >/dev/null 2>&1 || pip install -e .",
-          "python ../patch_fluxrt.py",
-          "python ../run_gradio_pinokio.py --server-name 127.0.0.1 --server-port {{port}} {{args.int8 ? '--int8' : ''}}"
-        ],
+        message: "python ../pinokio_tasks.py runtime-deps",
         on: [{
-          event: "/(http:\\/\\/[^\\s]+)/",
+          event: "/PINOKIO_FLUXRT_RUNTIME_READY/",
+          kill: true
+        }]
+      }
+    },
+    {
+      method: "shell.run",
+      params: {
+        conda: {
+          path: "env",
+          python: "3.12"
+        },
+        path: "app",
+        message: "python ../run_gradio_pinokio.py --server-name 127.0.0.1 --server-port {{port}} {{args.int8 ? '--int8' : ''}}",
+        on: [{
+          event: "/(http:\\/\\/[0-9.:]+)/",
           done: true
         }]
       }

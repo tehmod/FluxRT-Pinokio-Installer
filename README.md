@@ -2,13 +2,14 @@
 
 Unofficial Pinokio launcher for [FluxRT](https://github.com/tensorforger/FluxRT) by TensorForger. FluxRT itself is created and maintained by TensorForger; this repository only packages installation and startup scripts for Pinokio.
 
-> Status: this launcher has only been tested on Linux with an NVIDIA GPU. Windows and macOS are not currently validated.
+> Status: this launcher targets Linux and Windows with an NVIDIA GPU (CUDA 12.8). macOS is not validated.
 
 ## What it does
 
 - clones `https://github.com/tensorforger/FluxRT` into `app`
 - creates a local Conda environment at `app/env`
-- installs PyTorch, project dependencies, and the editable `fluxrt` package
+- installs PyTorch through the cross-platform `torch.js` helper (NVIDIA cu128 on Windows/Linux, ROCm on AMD Linux, DirectML on AMD Windows, MPS on Apple Silicon, CPU fallback)
+- installs project dependencies and the editable `fluxrt` package
 - downloads required models: `RIFE-safetensors` and `FLUX.2-klein-4B`
 - can optionally download `FLUX.2-klein-4B-int8`
 - starts the FluxRT Gradio demo in the OS default browser
@@ -134,7 +135,7 @@ LoRA files should be referenced by their path relative to `app`, for example `lo
 
 ## Notes
 
-- This launcher is configured for Linux and has only been tested on Linux installs.
+- This launcher supports Linux and Windows. On Windows, Pinokio's bundled Miniconda and Git are used automatically.
 - The repository intentionally does not include FluxRT source, Conda environments, generated benchmark reports, Hugging Face model weights, LivePortrait weights, LoRAs, or other downloaded runtime files. The Pinokio scripts create/download those files during install.
 - The Gradio UI launches on a local HTTP address and opens with `popout: true`, so it uses the OS default browser instead of Pinokio's embedded browser.
 - If the repository already exists in `app`, the launcher updates the clone instead of re-downloading it.

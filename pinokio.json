@@ -1,7 +1,7 @@
 {
   "version": "5.0",
   "title": "FluxRT Pinokio Installer",
-  "description": "Linux-tested Pinokio launcher for FluxRT with automatic model downloads.",
+  "description": "Pinokio launcher for FluxRT with automatic model downloads.",
   "icon": "icon.svg",
-  "platform": ["linux"]
+  "platform": ["linux", "win32"]
 }

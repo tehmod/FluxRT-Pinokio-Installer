@@ -23,11 +23,23 @@ def add_managed_bin_to_path():
     home = pinokio_home()
     if not home:
         return
-    bins = [
-        home / "bin" / "miniconda" / "bin",
-        home / "bin" / "git" / "bin",
-        home / "bin" / "npm" / "bin",
-    ]
+    if os.name == "nt":
+        bins = [
+            home / "bin" / "miniconda",
+            home / "bin" / "miniconda" / "Scripts",
+            home / "bin" / "miniconda" / "Library" / "bin",
+            home / "bin" / "git" / "cmd",
+            home / "bin" / "git" / "bin",
+            home / "bin" / "git" / "mingw64" / "bin",
+            home / "bin" / "npm",
+            home / "bin" / "npm" / "bin",
+        ]
+    else:
+        bins = [
+            home / "bin" / "miniconda" / "bin",
+            home / "bin" / "git" / "bin",
+            home / "bin" / "npm" / "bin",
+        ]
     existing = os.environ.get("PATH", "")
     prefix = [str(path) for path in bins if path.exists()]
     os.environ["PATH"] = os.pathsep.join(prefix + [existing])
@@ -120,20 +132,18 @@ def clone_or_update_source(allow_clone):
 
 def install_python_deps(full_install):
     if full_install and not has_module("torch"):
-        run([
-            sys.executable,
-            "-m",
-            "pip",
-            "install",
-            "torch",
-            "torchvision",
-            "--index-url",
-            "https://download.pytorch.org/whl/cu128",
-        ], cwd=APP)
-    if not has_module("diffusers"):
+        raise SystemExit(
+            "ERROR: torch is not installed. Run the Pinokio Install step (it invokes torch.js) before continuing."
+        )
+    if not has_module("cv2"):
         run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], cwd=APP)
     if not has_module("fluxrt"):
         run([sys.executable, "-m", "pip", "install", "-e", "."], cwd=APP)
+
+
+def ensure_runtime_ready():
+    install_python_deps(True)
+    run([sys.executable, str(ROOT / "patch_fluxrt.py")], cwd=APP)
 
 
 def repo_id_from_url(url):
@@ -230,6 +240,9 @@ def main():
     elif task == "start-models":
         install_models()
         print("PINOKIO_FLUXRT_START_MODELS_READY", flush=True)
+    elif task == "runtime-deps":
+        ensure_runtime_ready()
+        print("PINOKIO_FLUXRT_RUNTIME_READY", flush=True)
     elif task == "int8":
         install_int8()
         print("PINOKIO_FLUXRT_INT8_READY", flush=True)

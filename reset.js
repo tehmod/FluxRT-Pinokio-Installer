@@ -1,13 +1,9 @@
 module.exports = {
   run: [
     {
-      method: "shell.run",
+      method: "fs.rm",
       params: {
-        bluefairy: "off",
-        path: ".",
-        message: [
-          "rm -rf app"
-        ]
+        path: "app"
       }
     }
   ]

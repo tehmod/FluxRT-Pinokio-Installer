@@ -13,6 +13,19 @@ module.exports = {
       }
     },
     {
+      method: "script.start",
+      params: {
+        uri: "torch.js",
+        params: {
+          path: "app",
+          conda: {
+            path: "env",
+            python: "3.12"
+          }
+        }
+      }
+    },
+    {
       method: "shell.run",
       params: {
         bluefairy: "off",
